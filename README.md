@@ -56,4 +56,6 @@ MIT
 
 [Marcelo Ratton](https://github.com/rattones)
 
-##
+## Repository
+
+[https://github.com/rattones/video-custom-controls](https://github.com/rattones/video-custom-controls)
