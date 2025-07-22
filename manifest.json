@@ -6,6 +6,12 @@
   "permissions": ["scripting"],
   "author": "Marcelo Ratton",
   "homepage_url": "https://github.com/rattones/video-custom-controls",
+  "icons": {
+    "16": "assets/play-circle.png",
+    "32": "assets/play-circle.png",
+    "48": "assets/play-circle.png",
+    "128": "assets/play-circle.png"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
