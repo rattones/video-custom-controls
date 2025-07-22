@@ -1,0 +1,63 @@
+.custom-video-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(30, 30, 30, 0.55); /* More transparent */
+  padding: 6px 12px;
+  border-radius: 6px;
+  position: absolute;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  z-index: 9999;
+  transition: opacity 0.3s;
+  opacity: 0.92;
+  pointer-events: auto;
+}
+
+video {
+  position: relative;
+}
+
+/* Ensure controls are always visible over video */
+.custom-video-controls:hover,
+.custom-video-controls:focus-within {
+  opacity: 1;
+}
+
+/* Hide default controls for clarity (optional, but recommended for custom UI) */
+video::-webkit-media-controls {
+  display: none !important;
+}
+video::-moz-media-controls {
+  display: none !important;
+}
+video::-ms-media-controls {
+  display: none !important;
+}
+video::-o-media-controls {
+  display: none !important;
+}
+video::media-controls {
+  display: none !important;
+}
+
+.custom-video-controls button {
+  background: #222b;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.custom-video-controls button:hover {
+  background: #444e;
+}
+
+.custom-video-controls input[type="range"] {
+  accent-color: #000;  /* Changed from #f80 (orange) to black */
+  background: transparent;
+}
