@@ -3,11 +3,11 @@
   align-items: center;
   gap: 8px;
   background: rgba(30, 30, 30, 0.55); /* More transparent */
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 3.6px 12px; /* 60% of 6px vertical padding */
+  border-radius: 3.6px; /* 60% of 6px */
   position: absolute;
   left: 50%;
-  bottom: 30px;
+  bottom: 18px; /* 60% of 30px */
   transform: translateX(-50%);
   z-index: 9999;
   transition: opacity 0.3s;
@@ -46,15 +46,20 @@ video::media-controls {
   background: #222b;
   color: #fff;
   border: none;
-  padding: 6px 10px;
-  border-radius: 3px;
+  padding: 3.6px 10px; /* 60% of 6px vertical, width unchanged */
+  border-radius: 1.8px; /* 60% of 3px */
   cursor: pointer;
-  font-size: 14px;
+  font-size: 8.4px; /* 60% of 14px */
   transition: background 0.2s;
 }
 
 .custom-video-controls button:hover {
   background: #444e;
+}
+
+.custom-video-controls button img {
+  height: 16.8px; /* 60% of 28px */
+  width: 28px;    /* width unchanged */
 }
 
 .custom-video-controls input[type="range"] {
