@@ -11,6 +11,14 @@ function createControls(video) {
   const controls = document.createElement("div");
   controls.className = "custom-video-controls";
 
+  // Progress bar container
+  const progressBarContainer = document.createElement("div");
+  progressBarContainer.className = "progress-bar-container";
+  const progressBar = document.createElement("div");
+  progressBar.className = "progress-bar";
+  progressBarContainer.appendChild(progressBar);
+  controls.appendChild(progressBarContainer);
+
   // Play/Pause Button (Play/Stop Circle)
   const playPause = document.createElement("button");
   playPause.innerHTML = video.paused
@@ -64,6 +72,21 @@ function createControls(video) {
   video.addEventListener("pause", () => {
     playPause.innerHTML = `<img src="${playIconSrc}" alt="Play" title="Play" width="28" height="28" />`;
   });
+
+  // Update progress bar as video plays
+  function updateProgress() {
+    if (video.duration) {
+      const percent = (video.currentTime / video.duration) * 100;
+      progressBar.style.width = percent + "%";
+    } else {
+      progressBar.style.width = "0%";
+    }
+  }
+  video.addEventListener("timeupdate", updateProgress);
+  video.addEventListener("durationchange", updateProgress);
+  video.addEventListener("progress", updateProgress);
+  // Initial update
+  updateProgress();
 
   controls.appendChild(rewind);
   controls.appendChild(playPause);
