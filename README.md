@@ -2,11 +2,13 @@
 
 A Chrome extension that adds custom controls (play, pause, rewind, forward, and volume) to all `<video>` elements on any website. The extension replaces the default browser video controls with a modern, floating UI and custom SVG icons.
 
+
 ## Features
 
 - **Custom Play/Pause Button:** Uses SVG icons for play and pause.
 - **Rewind & Forward:** Jump 5 seconds backward or forward.
 - **Volume Slider:** Adjust the video volume directly from the custom controls.
+- **Progress Bar:** See and scrub the current playback position.
 - **Always Visible:** Controls float over the video and remain visible.
 - **Works Everywhere:** Injects controls into all videos on all websites.
 - **SPA Support:** Uses MutationObserver to handle dynamically loaded videos.
