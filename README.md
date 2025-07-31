@@ -11,12 +11,12 @@ A Chrome extension that adds custom controls (play, pause, rewind, forward, and 
 - **Works Everywhere:** Injects controls into all videos on all websites.
 - **SPA Support:** Uses MutationObserver to handle dynamically loaded videos.
 
+
 ## Installation
 
-1. Clone or download this repository.
-2. Open Chrome and go to `chrome://extensions/`.
-3. Enable "Developer mode" (top right).
-4. Click "Load unpacked" and select the project folder.
+1. Go to the Chrome Web Store and search for "Video Custom Controls".
+2. Or directly access: [Video Custom Controls](https://chromewebstore.google.com/detail/video-custom-controls/clknmnfeamcbampmbjoihgonikcinafd)
+3. Click "Add to Chrome" to install the extension.
 
 ## Usage
 
@@ -44,9 +44,6 @@ video-custom-controls/
 - **styles.css**: Styles for the custom controls UI.
 - **manifest.json**: Chrome extension manifest.
 
-## Permissions
-
-- `scripting`: Required to inject scripts and styles into web pages.
 
 ## License
 
