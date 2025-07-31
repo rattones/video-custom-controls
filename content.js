@@ -1,5 +1,21 @@
 function createControls(video) {
   if (video.hasCustomControls) return; // Prevent multiple controls
+  // Se não for possível calcular progresso (ex: live), não exibe controles customizados
+  // duration === Infinity ou NaN indica live ou sem progresso
+  if (!isFinite(video.duration) || isNaN(video.duration) || video.duration === 0) {
+    // Mas pode ser que o metadata ainda não foi carregado, então escuta o evento
+    const onMeta = () => {
+      if (!isFinite(video.duration) || isNaN(video.duration) || video.duration === 0) {
+        // Não exibe controles
+        return;
+      } else {
+        video.removeEventListener('loadedmetadata', onMeta);
+        createControls(video); // tenta de novo
+      }
+    };
+    video.addEventListener('loadedmetadata', onMeta);
+    return;
+  }
   video.hasCustomControls = true;
 
   // Use chrome.runtime.getURL to get correct extension paths for icons
