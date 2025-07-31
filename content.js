@@ -10,6 +10,12 @@ function createControls(video) {
 
   const controls = document.createElement("div");
   controls.className = "custom-video-controls";
+  // Para manipular visibilidade dos controles (exceto barra de progresso)
+  let hideTimeout = null;
+
+  // Elemento para agrupar os controles (exceto barra de progresso)
+  const controlsBox = document.createElement("div");
+  controlsBox.className = "custom-controls-box";
 
   // Progress bar container
   const progressBarContainer = document.createElement("div");
@@ -65,6 +71,12 @@ function createControls(video) {
     video.volume = volume.value;
   };
 
+  // Adiciona os controles na box
+  controlsBox.appendChild(rewind);
+  controlsBox.appendChild(playPause);
+  controlsBox.appendChild(forward);
+  controlsBox.appendChild(volume);
+
   // Update playPause icon on video events
   video.addEventListener("play", () => {
     playPause.innerHTML = `<img src="${stopIconSrc}" alt="Pause" title="Pause" width="28" height="28" />`;
@@ -88,10 +100,8 @@ function createControls(video) {
   // Initial update
   updateProgress();
 
-  controls.appendChild(rewind);
-  controls.appendChild(playPause);
-  controls.appendChild(forward);
-  controls.appendChild(volume);
+  // Adiciona a box de controles (exceto barra de progresso)
+  controls.appendChild(controlsBox);
 
   // Set the parent of video to relative so absolute controls can float over video
   const parent = video.parentNode;
@@ -103,6 +113,56 @@ function createControls(video) {
 
   // Optional: style video to avoid overlap
   video.style.display = "block";
+
+  // --- Lógica de ocultação automática dos controles ---
+  // Esconde a box de controles (não a barra de progresso)
+
+  function hideControlsBox() {
+    controlsBox.style.opacity = "0";
+    controlsBox.style.pointerEvents = "none";
+    controls.classList.add("minimized");
+  }
+  // Mostra a box de controles
+  function showControlsBox() {
+    controlsBox.style.opacity = "1";
+    controlsBox.style.pointerEvents = "auto";
+    controls.classList.remove("minimized");
+  }
+
+  // Inicialmente oculta (minimizada)
+  hideControlsBox();
+
+  // Mouse sai da área da caixa principal: inicia timer para esconder
+  controls.addEventListener("mouseleave", (e) => {
+    // Só esconde se não está sobre a barra de progresso
+    if (e.relatedTarget && progressBarContainer.contains(e.relatedTarget)) return;
+    hideTimeout = setTimeout(hideControlsBox, 2000);
+  });
+  // Mouse entra na área da caixa principal: mostra imediatamente e cancela timer
+  controls.addEventListener("mouseenter", () => {
+    if (hideTimeout) clearTimeout(hideTimeout);
+    showControlsBox();
+  });
+  // Mouse entra na barra de progresso: mostra imediatamente
+  progressBarContainer.addEventListener("mouseenter", () => {
+    if (hideTimeout) clearTimeout(hideTimeout);
+    showControlsBox();
+  });
+  // Mouse sai da barra de progresso: se não está sobre a caixa, inicia timer
+  progressBarContainer.addEventListener("mouseleave", (e) => {
+    if (e.relatedTarget && controlsBox.contains(e.relatedTarget)) return;
+    hideTimeout = setTimeout(hideControlsBox, 2000);
+  });
+  // Ao interagir com qualquer controle, mostra imediatamente
+  controlsBox.addEventListener("mouseenter", () => {
+    if (hideTimeout) clearTimeout(hideTimeout);
+    showControlsBox();
+  });
+  controlsBox.addEventListener("mouseleave", (e) => {
+    if (e.relatedTarget && progressBarContainer.contains(e.relatedTarget)) return;
+    hideTimeout = setTimeout(hideControlsBox, 2000);
+  });
+  // Fim da lógica de ocultação
 }
 
 function addControlsToVideos() {

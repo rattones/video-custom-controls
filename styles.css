@@ -18,6 +18,28 @@
   overflow: visible;
 }
 
+.custom-video-controls.minimized {
+  padding: 0;
+  background: transparent;
+  height: 3px;
+  min-height: 0;
+  gap: 0;
+  /* Remove sombra, borda, etc se quiser */
+}
+
+.custom-controls-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.3s;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.custom-controls-box[style*="opacity: 0"] {
+  pointer-events: none !important;
+}
+
 video {
   position: relative;
 }
