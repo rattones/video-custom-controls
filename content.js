@@ -111,6 +111,20 @@ function createControls(video) {
   // Place controls as the last element inside the parent, so it overlays the video
   parent.appendChild(controls);
 
+  // Define a base da caixa principal a 80% da altura do vídeo
+  function updateControlsPosition() {
+    const rect = video.getBoundingClientRect();
+    const videoHeight = rect.height || video.offsetHeight;
+    if (videoHeight) {
+      controls.style.bottom = (videoHeight * 0.1) + "px";
+    }
+  }
+  // Atualiza ao carregar e ao redimensionar
+  updateControlsPosition();
+  window.addEventListener('resize', updateControlsPosition);
+  video.addEventListener('loadedmetadata', updateControlsPosition);
+  video.addEventListener('resize', updateControlsPosition);
+
   // Optional: style video to avoid overlap
   video.style.display = "block";
 
