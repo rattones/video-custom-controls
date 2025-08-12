@@ -127,12 +127,15 @@ function createControls(video) {
   // Place controls as the last element inside the parent, so it overlays the video
   parent.appendChild(controls);
 
-  // Define a base da caixa principal a 80% da altura do vídeo
+  // Define a base da caixa principal a 80% da altura do vídeo, e salva a posição original
+  let originalBottom = null;
   function updateControlsPosition() {
     const rect = video.getBoundingClientRect();
     const videoHeight = rect.height || video.offsetHeight;
     if (videoHeight) {
-      controls.style.bottom = (videoHeight * 0.1) + "px";
+      const bottom = (videoHeight * 0.1);
+      controls.style.bottom = bottom + "px";
+      originalBottom = bottom;
     }
   }
   // Atualiza ao carregar e ao redimensionar
@@ -151,12 +154,22 @@ function createControls(video) {
     controlsBox.style.opacity = "0";
     controlsBox.style.pointerEvents = "none";
     controls.classList.add("minimized");
+    // Move para a base do vídeo
+    const rect = video.getBoundingClientRect();
+    const videoHeight = rect.height || video.offsetHeight;
+    if (videoHeight) {
+      controls.style.bottom = "0px";
+    }
   }
   // Mostra a box de controles
   function showControlsBox() {
     controlsBox.style.opacity = "1";
     controlsBox.style.pointerEvents = "auto";
     controls.classList.remove("minimized");
+    // Volta para a posição original
+    if (originalBottom !== null) {
+      controls.style.bottom = originalBottom + "px";
+    }
   }
 
   // Inicialmente oculta (minimizada)
