@@ -69,7 +69,7 @@ video::media-controls {
 
 .custom-video-controls button {
   background: #222b;
-  color: #fff;
+  color: rgba(30, 30, 30, 0.55);
   border: none;
   padding: 3.6px 10px; /* 60% of 6px vertical, width unchanged */
   border-radius: 1.8px; /* 60% of 3px */
@@ -87,9 +87,19 @@ video::media-controls {
   width: 28px;    /* width unchanged */
 }
 
+.custom-video-controls button[aria-label="Playback speed"] {
+  min-width: 38px;
+  font-weight: bold;
+  background: rgba(30, 30, 30, 0.55);
+  color: #fff;
+  border-radius: 50px;
+  padding: 3px 10px;
+  margin-left: 8px;
+}
+
 .custom-video-controls input[type="range"] {
   accent-color: #000;  /* Changed from #f80 (orange) to black */
-  background: rgba(30, 30, 30, 0.55); /* Igual à caixa principal */
+  background: rgba(30, 30, 30, 0.55); /* Igual os botões */
   border: none;
 }
 
@@ -114,4 +124,43 @@ video::media-controls {
   transition: width 0.15s linear;
   border-top-left-radius: 3.6px;
   border-top-right-radius: 3.6px;
+}
+
+.custom-progress-input {
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  background: rgba(229,57,53,0.25);
+  border-radius: 4px;
+  outline: none;
+  margin: 0;
+  padding: 0;
+}
+.custom-progress-input::-webkit-slider-thumb {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e53935;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px #0004;
+}
+.custom-progress-input::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e53935;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px #0004;
+}
+.custom-progress-input::-ms-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e53935;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 0 2px #0004;
 }

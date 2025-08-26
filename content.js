@@ -81,17 +81,79 @@ function createControls(video) {
   volume.max = 1;
   volume.step = 0.01;
   volume.value = video.volume;
-  volume.style.width = "80px";
+  volume.style.width = "50px";
   volume.setAttribute("aria-label", "Volume");
   volume.oninput = () => {
     video.volume = volume.value;
+    video.muted = false; // Desmuta ao ajustar o volume
   };
+  volume.onclick = () => {
+    video.muted = false; // Desmuta ao clicar no controle de volume
+  };
+
+  // Botão de velocidade
+  const speedSteps = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0, 4.0];
+  let speedIndex = speedSteps.indexOf(1.0);
+
+  const speedBtn = document.createElement("button");
+  speedBtn.setAttribute("aria-label", "Playback speed");
+  speedBtn.textContent = `${speedSteps[speedIndex]}x`;
+  speedBtn.style.fontWeight = "bold";
+
+  speedBtn.onclick = () => {
+    speedIndex = (speedIndex + 1) % speedSteps.length;
+    video.playbackRate = speedSteps[speedIndex];
+    speedBtn.textContent = `${speedSteps[speedIndex]}x`;
+  };
+
+  // Barra de progresso (input range)
+  const progressInput = document.createElement("input");
+  progressInput.type = "range";
+  progressInput.min = 0;
+  progressInput.max = 1000;
+  progressInput.value = 0;
+  progressInput.className = "custom-progress-input";
+  progressInput.setAttribute("aria-label", "Video progress");
+  progressInput.style.width = "100%";
+  progressInput.style.position = "absolute";
+  progressInput.style.left = "0";
+  progressInput.style.top = "0";
+  progressInput.style.height = "8px";
+  progressInput.style.zIndex = "10";
+  progressInput.style.background = "transparent";
+  progressInput.style.pointerEvents = "auto";
+
+  // Atualiza o input conforme o vídeo avança
+  function updateProgressInput() {
+    if (video.duration) {
+      progressInput.value = Math.floor((video.currentTime / video.duration) * 1000);
+    } else {
+      progressInput.value = 0;
+    }
+  }
+  video.addEventListener("timeupdate", updateProgressInput);
+  video.addEventListener("durationchange", updateProgressInput);
+  video.addEventListener("progress", updateProgressInput);
+
+  // Permite arrastar para buscar no vídeo
+  progressInput.addEventListener("input", () => {
+    if (video.duration) {
+      video.currentTime = (progressInput.value / 1000) * video.duration;
+    }
+  });
+
+  // Adiciona o input acima dos controles
+  controls.appendChild(progressInput);
+
+  // Ajusta o container para posição relativa para sobrepor o input
+  controls.style.position = "relative";
 
   // Adiciona os controles na box
   controlsBox.appendChild(rewind);
   controlsBox.appendChild(playPause);
   controlsBox.appendChild(forward);
   controlsBox.appendChild(volume);
+  controlsBox.appendChild(speedBtn);
 
   // Update playPause icon on video events
   video.addEventListener("play", () => {
