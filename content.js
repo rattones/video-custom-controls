@@ -271,7 +271,14 @@ function createControls(video) {
 }
 
 function addControlsToVideos() {
-  document.querySelectorAll("video").forEach(createControls);
+  const videos = document.querySelectorAll("video"); //.forEach(createControls);
+  videos.forEach(video => {
+    if (video.style.position === "absolute") {
+      video.style.position = "";
+    }
+    createControls(video);
+  });
+
 }
 
 // For dynamically added videos (e.g. SPA), use MutationObserver
