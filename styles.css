@@ -1,36 +1,89 @@
+:root {
+  /* ...existing variables... */
+}
+
+.custom-volume-slider {
+  width: 50px;
+}
+
+.custom-progress-input-pos {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: var(--progress-input-height);
+  z-index: 10;
+  background: transparent;
+  pointer-events: auto;
+}
+
+.custom-controls-relative {
+  position: relative;
+}
+
+.custom-video-block {
+  display: block;
+}
+
+:root {
+  --control-gap: 8px;
+  --control-bg: rgba(30, 30, 30, 0.55);
+  --control-padding: 3.6px 12px;
+  --control-radius: 3.6px;
+  --control-opacity: 0.92;
+  --control-z: 9999;
+  --progress-bar-height: 3px;
+  --progress-bar-bg: rgba(255,255,255,0.55);
+  --progress-bar-fill: rgba(229,57,53,0.85);
+  --progress-input-height: 8px;
+  --progress-input-bg: rgba(229,57,53,0.25);
+  --progress-thumb-size: 14px;
+  --progress-thumb-bg: #e53935;
+  --progress-thumb-border: 2px solid #fff;
+  --progress-thumb-shadow: 0 0 2px #0004;
+  --button-bg: #222b;
+  --button-hover-bg: #444e;
+  --button-radius: 1.8px;
+  --button-font-size: 8.4px;
+  --button-padding: 3.6px 10px;
+  --icon-size: 28px;
+  --icon-height: 16.8px;
+  --speed-btn-radius: 50px;
+  --speed-btn-padding: 3px 10px;
+  --speed-btn-margin: 8px;
+}
+
 .custom-video-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: rgba(30, 30, 30, 0.55);
-  padding: 3.6px 12px;
-  border-radius: 3.6px;
+  gap: var(--control-gap);
+  background: var(--control-bg);
+  padding: var(--control-padding);
+  border-radius: var(--control-radius);
   position: absolute;
   left: 50%;
   bottom: 18px;
   transform: translateX(-50%);
-  z-index: 9999;
+  z-index: var(--control-z);
   transition: opacity 0.3s;
-  opacity: 0.92;
+  opacity: var(--control-opacity);
   pointer-events: auto;
   box-sizing: border-box;
-  /* For progress bar stacking */
   overflow: visible;
 }
 
 .custom-video-controls.minimized {
   padding: 0;
   background: transparent;
-  height: 3px;
+  height: var(--progress-bar-height);
   min-height: 0;
   gap: 0;
-  /* Remove sombra, borda, etc se quiser */
 }
 
 .custom-controls-box {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--control-gap);
   transition: opacity 0.3s;
   opacity: 1;
   pointer-events: auto;
@@ -44,93 +97,83 @@ video {
   position: relative;
 }
 
-/* Ensure controls are always visible over video */
 .custom-video-controls:hover,
 .custom-video-controls:focus-within {
   opacity: 1;
 }
 
-/* Hide default controls for clarity (optional, but recommended for custom UI) */
-video::-webkit-media-controls {
-  display: none !important;
-}
-video::-moz-media-controls {
-  display: none !important;
-}
-video::-ms-media-controls {
-  display: none !important;
-}
-video::-o-media-controls {
-  display: none !important;
-}
+video::-webkit-media-controls,
+video::-moz-media-controls,
+video::-ms-media-controls,
+video::-o-media-controls,
 video::media-controls {
   display: none !important;
 }
 
 .custom-video-controls button {
-  background: #222b;
-  color: rgba(30, 30, 30, 0.55);
+  background: var(--button-bg);
+  color: var(--control-bg);
   border: none;
-  padding: 3.6px 10px; /* 60% of 6px vertical, width unchanged */
-  border-radius: 1.8px; /* 60% of 3px */
+  padding: var(--button-padding);
+  border-radius: var(--button-radius);
   cursor: pointer;
-  font-size: 8.4px; /* 60% of 14px */
+  font-size: var(--button-font-size);
   transition: background 0.2s;
 }
 
 .custom-video-controls button:hover {
-  background: #444e;
+  background: var(--button-hover-bg);
 }
 
 .custom-video-controls button img {
-  height: 16.8px; /* 60% of 28px */
-  width: 28px;    /* width unchanged */
+  height: var(--icon-height);
+  width: var(--icon-size);
 }
 
 .custom-video-controls button[aria-label="Playback speed"] {
   min-width: 38px;
   font-weight: bold;
-  background: rgba(30, 30, 30, 0.55);
+  background: var(--control-bg);
   color: #fff;
-  border-radius: 50px;
-  padding: 3px 10px;
-  margin-left: 8px;
+  border-radius: var(--speed-btn-radius);
+  padding: var(--speed-btn-padding);
+  margin-left: var(--speed-btn-margin);
 }
 
 .custom-video-controls input[type="range"] {
-  accent-color: #000;  /* Changed from #f80 (orange) to black */
-  background: rgba(30, 30, 30, 0.55); /* Igual os botões */
+  accent-color: #000;
+  background: var(--control-bg);
   border: none;
 }
 
-.custom-video-controls .progress-bar-container {
+.progress-bar-container {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 3px;
-  border-top-left-radius: 3.6px;
-  border-top-right-radius: 3.6px;
-  background: rgba(255,255,255,0.55); /* Fundo branco translúcido */
+  height: var(--progress-bar-height);
+  border-top-left-radius: var(--control-radius);
+  border-top-right-radius: var(--control-radius);
+  background: var(--progress-bar-bg);
   overflow: hidden;
   z-index: 1;
   pointer-events: none;
 }
 
-.custom-video-controls .progress-bar {
+.progress-bar {
   height: 100%;
   width: 0%;
-  background: rgba(229,57,53,0.85); /* Vermelho translúcido */
+  background: var(--progress-bar-fill);
   transition: width 0.15s linear;
-  border-top-left-radius: 3.6px;
-  border-top-right-radius: 3.6px;
+  border-top-left-radius: var(--control-radius);
+  border-top-right-radius: var(--control-radius);
 }
 
 .custom-progress-input {
   appearance: none;
   width: 100%;
-  height: 8px;
-  background: rgba(229,57,53,0.25);
+  height: var(--progress-input-height);
+  background: var(--progress-input-bg);
   border-radius: 4px;
   outline: none;
   margin: 0;
@@ -138,29 +181,29 @@ video::media-controls {
 }
 .custom-progress-input::-webkit-slider-thumb {
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: var(--progress-thumb-size);
+  height: var(--progress-thumb-size);
   border-radius: 50%;
-  background: #e53935;
+  background: var(--progress-thumb-bg);
   cursor: pointer;
-  border: 2px solid #fff;
-  box-shadow: 0 0 2px #0004;
+  border: var(--progress-thumb-border);
+  box-shadow: var(--progress-thumb-shadow);
 }
 .custom-progress-input::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: var(--progress-thumb-size);
+  height: var(--progress-thumb-size);
   border-radius: 50%;
-  background: #e53935;
+  background: var(--progress-thumb-bg);
   cursor: pointer;
-  border: 2px solid #fff;
-  box-shadow: 0 0 2px #0004;
+  border: var(--progress-thumb-border);
+  box-shadow: var(--progress-thumb-shadow);
 }
 .custom-progress-input::-ms-thumb {
-  width: 14px;
-  height: 14px;
+  width: var(--progress-thumb-size);
+  height: var(--progress-thumb-size);
   border-radius: 50%;
-  background: #e53935;
+  background: var(--progress-thumb-bg);
   cursor: pointer;
-  border: 2px solid #fff;
-  box-shadow: 0 0 2px #0004;
+  border: var(--progress-thumb-border);
+  box-shadow: var(--progress-thumb-shadow);
 }
