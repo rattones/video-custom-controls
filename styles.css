@@ -83,6 +83,7 @@
   transition: opacity 0.3s;
   opacity: 1;
   pointer-events: auto;
+  margin-top: 6px;
 }
 
 .custom-controls-box[style*="opacity: 0"] {

@@ -6,11 +6,13 @@ A Chrome extension that adds custom controls (play, pause, rewind, forward, and 
 ## Features
 
 - **Custom Play/Pause Button:** Uses SVG icons for play and pause.
+- **Restart Button:** Instantly jump back to the beginning of the video with a single click.
 - **Rewind & Forward:** Jump 5 seconds backward or forward.
 - **Volume Slider:** Adjust the video volume directly from the custom controls.
- - **Playback Speed Button:** Change the video playback speed with a dedicated button.
- - **Interactive Progress Bar:** Drag and control the current playback position with a fully interactive progress bar.
-- **Always Visible:** Controls float over the video and remain visible.
+- **Playback Speed Button:** Change the video playback speed with a dedicated button (left-click to increase, right-click to decrease).
+- **Interactive Progress Bar:** Drag and control the current playback position with a fully interactive progress bar.
+- **Auto-Hide Controls:** Controls automatically minimize to show only the progress bar when not in use, expanding on hover.
+- **Modern Design:** Sleek floating UI with custom red-themed progress indicators and consistent button styling.
 - **Works Everywhere:** Injects controls into all videos on all websites.
 - **SPA Support:** Uses MutationObserver to handle dynamically loaded videos.
 
@@ -24,7 +26,10 @@ A Chrome extension that adds custom controls (play, pause, rewind, forward, and 
 
 - Open any website with a video.
 - The default controls will be hidden and replaced by the custom controls.
-- Use the play/pause, rewind, forward, and volume buttons as needed.
+- Hover over the video to expand the full control panel.
+- Use the restart, play/pause, rewind, forward, volume slider, and speed buttons as needed.
+- Left-click the speed button to increase playback speed, right-click to decrease.
+- The controls automatically minimize to a slim progress bar when your cursor moves away.
 
 ## Project Structure
 
@@ -33,6 +38,7 @@ video-custom-controls/
 ├── assets/
 │   ├── play-circle.svg
 │   ├── stop-circle.svg
+│   ├── skip-start-circle.svg
 │   ├── rewind-circle.svg
 │   └── fast-forward-circle.svg
 ├── content.js

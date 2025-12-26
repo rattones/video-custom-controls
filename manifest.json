@@ -1,15 +1,15 @@
 {
   "manifest_version": 3,
   "name": "Video Custom Controls",
-  "description": "Adds custom controls (play, pause, rewind, forward, sound) to video tags.",
+  "description": "Adds custom controls (play, pause, rewind, forward, sound, restart) to video tags.",
   "version": "1.4.3",
   "author": "Marcelo Ratton",
   "homepage_url": "https://github.com/rattones/video-custom-controls",
   "icons": {
-    "16": "assets/play-circle.png",
-    "32": "assets/play-circle.png",
-    "48": "assets/play-circle.png",
-    "128": "assets/play-circle.png"
+    "16": "assets/play-circle.svg",
+    "32": "assets/play-circle.svg",
+    "48": "assets/play-circle.svg",
+    "128": "assets/play-circle.svg"
   },
   "content_scripts": [
     {
