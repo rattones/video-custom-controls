@@ -19,6 +19,16 @@ function createPlayPauseButton(video, icons) {
   return btn;
 }
 
+function createRestartButton(video, icons) {
+  const btn = document.createElement("button");
+  btn.innerHTML = `<img src="${icons.restart}" alt="Restart video" title="Restart video" width="28" height="28" />`;
+  btn.setAttribute("aria-label", "Restart video");
+  btn.onclick = () => {
+    video.currentTime = 0;
+  };
+  return btn;
+}
+
 function createRewindButton(video, icons) {
   const btn = document.createElement("button");
   btn.innerHTML = `<img src="${icons.rewind}" alt="Rewind 5 seconds" title="Rewind 5 seconds" width="28" height="28" />`;
@@ -65,10 +75,17 @@ function createSpeedButton(video) {
   btn.setAttribute("aria-label", "Playback speed");
   btn.style.fontWeight = "bold";
   btn.textContent = `${speedSteps[speedIndex]}x`;
-  btn.onclick = () => {
-    speedIndex = (speedIndex + 1) % speedSteps.length;
+  function updateSpeed(increment) {
+    speedIndex = (speedIndex + increment + speedSteps.length) % speedSteps.length;
     video.playbackRate = speedSteps[speedIndex];
     btn.textContent = `${speedSteps[speedIndex]}x`;
+  }
+  btn.onclick = () => {
+    updateSpeed(1);
+  };
+  btn.oncontextmenu = (e) => {
+    e.preventDefault();
+    updateSpeed(-1);
   };
   return btn;
 }
@@ -180,6 +197,7 @@ function createControls(video) {
   const icons = {
     play: chrome.runtime.getURL('assets/play-circle.svg'),
     stop: chrome.runtime.getURL('assets/stop-circle.svg'),
+    restart: chrome.runtime.getURL('assets/skip-start-circle.svg'),
     rewind: chrome.runtime.getURL('assets/rewind-circle.svg'),
     forward: chrome.runtime.getURL('assets/fast-forward-circle.svg'),
   };
@@ -190,6 +208,7 @@ function createControls(video) {
   const { container: progressBarContainer } = createProgressBar(video);
   controls.appendChild(progressBarContainer);
   const playPause = createPlayPauseButton(video, icons);
+  const restart = createRestartButton(video, icons);
   const rewind = createRewindButton(video, icons);
   const forward = createForwardButton(video, icons);
   const volume = createVolumeSlider(video);
@@ -197,6 +216,7 @@ function createControls(video) {
   const progressInput = createProgressInput(video);
   controls.appendChild(progressInput);
   controls.classList.add("custom-controls-relative");
+  controlsBox.appendChild(restart);
   controlsBox.appendChild(rewind);
   controlsBox.appendChild(playPause);
   controlsBox.appendChild(forward);
