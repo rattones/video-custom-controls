@@ -5,8 +5,8 @@ function createPlayPauseButton(video, icons) {
   btn.setAttribute("aria-label", "Play/Pause");
   function updateIcon() {
     btn.innerHTML = video.paused
-      ? `<img src="${icons.play}" alt="Play" title="Play" width="28" height="28" />`
-      : `<img src="${icons.stop}" alt="Pause" title="Pause" width="28" height="28" />`;
+      ? `<img src="${icons.play}" alt="Play" title="Play" />`
+      : `<img src="${icons.stop}" alt="Pause" title="Pause" />`;
   }
   btn.onclick = () => {
     if (video.paused) video.play();
@@ -21,7 +21,7 @@ function createPlayPauseButton(video, icons) {
 
 function createRestartButton(video, icons) {
   const btn = document.createElement("button");
-  btn.innerHTML = `<img src="${icons.restart}" alt="Restart video" title="Restart video" width="28" height="28" />`;
+  btn.innerHTML = `<img src="${icons.restart}" alt="Restart video" title="Restart video" />`;
   btn.setAttribute("aria-label", "Restart video");
   btn.onclick = () => {
     video.currentTime = 0;
@@ -31,7 +31,7 @@ function createRestartButton(video, icons) {
 
 function createRewindButton(video, icons) {
   const btn = document.createElement("button");
-  btn.innerHTML = `<img src="${icons.rewind}" alt="Rewind 5 seconds" title="Rewind 5 seconds" width="28" height="28" />`;
+  btn.innerHTML = `<img src="${icons.rewind}" alt="Rewind 5 seconds" title="Rewind 5 seconds" />`;
   btn.setAttribute("aria-label", "Rewind 5 seconds");
   btn.onclick = () => {
     video.currentTime = Math.max(0, video.currentTime - 5);
@@ -41,7 +41,7 @@ function createRewindButton(video, icons) {
 
 function createForwardButton(video, icons) {
   const btn = document.createElement("button");
-  btn.innerHTML = `<img src="${icons.forward}" alt="Forward 5 seconds" title="Forward 5 seconds" width="28" height="28" />`;
+  btn.innerHTML = `<img src="${icons.forward}" alt="Forward 5 seconds" title="Forward 5 seconds" />`;
   btn.setAttribute("aria-label", "Forward 5 seconds");
   btn.onclick = () => {
     video.currentTime = Math.min(video.duration, video.currentTime + 5);
@@ -66,6 +66,47 @@ function createVolumeSlider(video) {
     video.muted = false;
   };
   return input;
+}
+
+function createFullscreenButton(video, icons) {
+  const btn = document.createElement("button");
+  btn.setAttribute("aria-label", "Fullscreen");
+  function updateIcon() {
+    const isFullscreen = document.fullscreenElement === video || document.fullscreenElement === video.parentElement;
+    btn.innerHTML = isFullscreen
+      ? `<img src="${icons.fullscreenExit}" alt="Exit fullscreen" title="Exit fullscreen" />`
+      : `<img src="${icons.fullscreen}" alt="Fullscreen" title="Fullscreen" />`;
+  }
+  btn.onclick = () => {
+    if (!document.fullscreenElement) {
+      const container = video.parentElement;
+      if (container.requestFullscreen) {
+        container.requestFullscreen();
+      } else if (container.webkitRequestFullscreen) {
+        container.webkitRequestFullscreen();
+      } else if (container.mozRequestFullScreen) {
+        container.mozRequestFullScreen();
+      } else if (container.msRequestFullscreen) {
+        container.msRequestFullscreen();
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  };
+  document.addEventListener("fullscreenchange", updateIcon);
+  document.addEventListener("webkitfullscreenchange", updateIcon);
+  document.addEventListener("mozfullscreenchange", updateIcon);
+  document.addEventListener("MSFullscreenChange", updateIcon);
+  updateIcon();
+  return btn;
 }
 
 function createSpeedButton(video) {
@@ -200,6 +241,8 @@ function createControls(video) {
     restart: chrome.runtime.getURL('assets/skip-start-circle.svg'),
     rewind: chrome.runtime.getURL('assets/rewind-circle.svg'),
     forward: chrome.runtime.getURL('assets/fast-forward-circle.svg'),
+    fullscreen: chrome.runtime.getURL('assets/fullscreen.svg'),
+    fullscreenExit: chrome.runtime.getURL('assets/fullscreen-exit.svg'),
   };
   const controls = document.createElement("div");
   controls.className = "custom-video-controls";
@@ -212,6 +255,7 @@ function createControls(video) {
   const rewind = createRewindButton(video, icons);
   const forward = createForwardButton(video, icons);
   const volume = createVolumeSlider(video);
+  const fullscreenBtn = createFullscreenButton(video, icons);
   const speedBtn = createSpeedButton(video);
   const progressInput = createProgressInput(video);
   controls.appendChild(progressInput);
@@ -221,6 +265,7 @@ function createControls(video) {
   controlsBox.appendChild(playPause);
   controlsBox.appendChild(forward);
   controlsBox.appendChild(volume);
+  controlsBox.appendChild(fullscreenBtn);
   controlsBox.appendChild(speedBtn);
   controls.appendChild(controlsBox);
   const parent = video.parentNode;

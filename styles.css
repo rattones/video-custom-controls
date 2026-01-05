@@ -19,8 +19,8 @@
   --button-radius: 1.8px;
   --button-font-size: 8.4px;
   --button-padding: 3.6px 10px;
-  --icon-size: 28px;
-  --icon-height: 16.8px;
+  --icon-size: 16px;
+  --icon-height: 16px;
   --speed-btn-radius: 50px;
   --speed-btn-padding: 3px 10px;
   --speed-btn-margin: 8px;
@@ -130,7 +130,7 @@ video::media-controls {
 .custom-video-controls button img {
   height: var(--icon-height);
   width: var(--icon-size);
-  filter: brightness(0) invert(1) opacity(0.15);
+  filter: brightness(0) invert(100%) opacity(0.15);
 }
 
 .custom-video-controls button[aria-label="Playback speed"] {
