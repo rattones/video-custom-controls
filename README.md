@@ -1,21 +1,16 @@
 # Video Custom Controls
 
-A Chrome extension that adds custom controls (play, pause, rewind, forward, and volume) to all `<video>` elements on any website. The extension replaces the default browser video controls with a modern, floating UI and custom SVG icons.
+A Chrome extension that lets you control any `<video>` element on any website — play, pause, rewind, forward, volume, playback speed, seek and fullscreen — from the extension's toolbar popup, instead of an overlay drawn on top of the page.
 
+This design avoids conflicts with sites that use complex nested CSS stacking contexts (e.g. Instagram), where an on-page overlay panel can end up rendered behind the site's own UI and stop receiving clicks/hover.
 
 ## Features
 
-- **Custom Play/Pause Button:** Uses SVG icons for play and pause.
-- **Restart Button:** Instantly jump back to the beginning of the video with a single click.
-- **Rewind & Forward:** Jump 5 seconds backward or forward.
-- **Volume Slider:** Adjust the video volume directly from the custom controls.
-- **Fullscreen Toggle:** Enter and exit fullscreen mode with a dedicated button that shows the appropriate icon for each state.
-- **Playback Speed Button:** Change the video playback speed with a dedicated button (left-click to increase, right-click to decrease).
-- **Interactive Progress Bar:** Drag and control the current playback position with a fully interactive progress bar.
-- **Auto-Hide Controls:** Controls automatically minimize to show only the progress bar when not in use, expanding on hover.
-- **Modern Design:** Sleek floating UI with custom red-themed progress indicators and consistent button styling.
-- **Works Everywhere:** Injects controls into all videos on all websites.
-- **SPA Support:** Uses MutationObserver to handle dynamically loaded videos.
+- **Popup-based controls:** Click the extension icon to open a small control panel — no UI is injected into the page.
+- **Auto-detects the active video:** If a page has multiple videos (e.g. a feed with several preloaded videos), the popup automatically controls the one that's most visible on screen.
+- **Play/Pause, Restart, Rewind/Forward (5s), Volume, Interactive seek bar, Playback speed** (click to increase, right-click to decrease), **Fullscreen toggle**.
+- **Native controls hidden:** the browser's default video control bar stays hidden, as before.
+- **Works everywhere:** any `<video>` element on any website.
 
 ## Installation
 
@@ -25,13 +20,10 @@ A Chrome extension that adds custom controls (play, pause, rewind, forward, and 
 
 ## Usage
 
-- Open any website with a video.
-- The default controls will be hidden and replaced by the custom controls.
-- Hover over the video to expand the full control panel.
-- Use the restart, play/pause, rewind, forward, volume slider, fullscreen, and speed buttons as needed.
-- Click the fullscreen button to toggle fullscreen mode.
+- Open any website with a video and click the extension icon in the toolbar.
+- The popup shows controls for whichever video is most visible on the page.
+- Use the restart, play/pause, rewind, forward, volume slider, seek bar, fullscreen, and speed buttons as needed.
 - Left-click the speed button to increase playback speed, right-click to decrease.
-- The controls automatically minimize to a slim progress bar when your cursor moves away.
 
 ## Project Structure
 
@@ -47,13 +39,17 @@ video-custom-controls/
 │   └── fullscreen-exit.svg
 ├── content.js
 ├── styles.css
+├── popup.html
+├── popup.css
+├── popup.js
 ├── manifest.json
 └── README.md
 ```
 
-- **assets/**: SVG icons for the controls.
-- **content.js**: Injects and manages the custom controls.
-- **styles.css**: Styles for the custom controls UI.
+- **assets/**: SVG icons used by the popup.
+- **content.js**: Hides native video controls and responds to popup commands (play/pause, seek, volume, speed, fullscreen) for the currently active video.
+- **styles.css**: Hides the browser's native video control bar.
+- **popup.html / popup.css / popup.js**: The toolbar popup UI and its logic.
 - **manifest.json**: Chrome extension manifest.
 
 

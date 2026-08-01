@@ -1,325 +1,123 @@
+// Content script: não injeta mais nenhum painel na página. Apenas expõe o(s)
+// <video> da página para o popup da extensão via mensagens, e recebe comandos
+// (play/pause, seek, volume, velocidade, fullscreen) de lá.
 
-// Funções utilitárias para criar cada controle
-function createPlayPauseButton(video, icons) {
-  const btn = document.createElement("button");
-  btn.setAttribute("aria-label", "Play/Pause");
-  function updateIcon() {
-    btn.innerHTML = video.paused
-      ? `<img src="${icons.play}" alt="Play" title="Play" />`
-      : `<img src="${icons.stop}" alt="Pause" title="Pause" />`;
-  }
-  btn.onclick = () => {
-    if (video.paused) video.play();
-    else video.pause();
-    updateIcon();
-  };
-  video.addEventListener("play", updateIcon);
-  video.addEventListener("pause", updateIcon);
-  updateIcon();
-  return btn;
-}
+const speedSteps = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0, 4.0];
+const speedIndexByVideo = new WeakMap();
 
-function createRestartButton(video, icons) {
-  const btn = document.createElement("button");
-  btn.innerHTML = `<img src="${icons.restart}" alt="Restart video" title="Restart video" />`;
-  btn.setAttribute("aria-label", "Restart video");
-  btn.onclick = () => {
-    video.currentTime = 0;
-  };
-  return btn;
-}
-
-function createRewindButton(video, icons) {
-  const btn = document.createElement("button");
-  btn.innerHTML = `<img src="${icons.rewind}" alt="Rewind 5 seconds" title="Rewind 5 seconds" />`;
-  btn.setAttribute("aria-label", "Rewind 5 seconds");
-  btn.onclick = () => {
-    video.currentTime = Math.max(0, video.currentTime - 5);
-  };
-  return btn;
-}
-
-function createForwardButton(video, icons) {
-  const btn = document.createElement("button");
-  btn.innerHTML = `<img src="${icons.forward}" alt="Forward 5 seconds" title="Forward 5 seconds" />`;
-  btn.setAttribute("aria-label", "Forward 5 seconds");
-  btn.onclick = () => {
-    video.currentTime = Math.min(video.duration, video.currentTime + 5);
-  };
-  return btn;
-}
-
-function createVolumeSlider(video) {
-  const input = document.createElement("input");
-  input.type = "range";
-  input.min = 0;
-  input.max = 1;
-  input.step = 0.01;
-  input.value = video.volume;
-  input.classList.add("custom-volume-slider");
-  input.setAttribute("aria-label", "Volume");
-  input.oninput = () => {
-    video.volume = input.value;
-    video.muted = false;
-  };
-  input.onclick = () => {
-    video.muted = false;
-  };
-  return input;
-}
-
-function createFullscreenButton(video, icons) {
-  const btn = document.createElement("button");
-  btn.setAttribute("aria-label", "Fullscreen");
-  function updateIcon() {
-    const isFullscreen = document.fullscreenElement === video || document.fullscreenElement === video.parentElement;
-    btn.innerHTML = isFullscreen
-      ? `<img src="${icons.fullscreenExit}" alt="Exit fullscreen" title="Exit fullscreen" />`
-      : `<img src="${icons.fullscreen}" alt="Fullscreen" title="Fullscreen" />`;
-  }
-  btn.onclick = () => {
-    if (!document.fullscreenElement) {
-      const container = video.parentElement;
-      if (container.requestFullscreen) {
-        container.requestFullscreen();
-      } else if (container.webkitRequestFullscreen) {
-        container.webkitRequestFullscreen();
-      } else if (container.mozRequestFullScreen) {
-        container.mozRequestFullScreen();
-      } else if (container.msRequestFullscreen) {
-        container.msRequestFullscreen();
-      }
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
-    }
-  };
-  document.addEventListener("fullscreenchange", updateIcon);
-  document.addEventListener("webkitfullscreenchange", updateIcon);
-  document.addEventListener("mozfullscreenchange", updateIcon);
-  document.addEventListener("MSFullscreenChange", updateIcon);
-  updateIcon();
-  return btn;
-}
-
-function createSpeedButton(video) {
-  const speedSteps = [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 3.0, 4.0];
-  let speedIndex = speedSteps.indexOf(1.0);
-  const btn = document.createElement("button");
-  btn.setAttribute("aria-label", "Playback speed");
-  btn.style.fontWeight = "bold";
-  btn.textContent = `${speedSteps[speedIndex]}x`;
-  function updateSpeed(increment) {
-    speedIndex = (speedIndex + increment + speedSteps.length) % speedSteps.length;
-    video.playbackRate = speedSteps[speedIndex];
-    btn.textContent = `${speedSteps[speedIndex]}x`;
-  }
-  btn.onclick = () => {
-    updateSpeed(1);
-  };
-  btn.oncontextmenu = (e) => {
-    e.preventDefault();
-    updateSpeed(-1);
-  };
-  return btn;
-}
-
-function createProgressBar(video) {
-  const container = document.createElement("div");
-  container.className = "progress-bar-container";
-  const bar = document.createElement("div");
-  bar.className = "progress-bar";
-  container.appendChild(bar);
-  function update() {
-    if (video.duration) {
-      const percent = (video.currentTime / video.duration) * 100;
-      bar.style.width = percent + "%";
-    } else {
-      bar.style.width = "0%";
-    }
-  }
-  video.addEventListener("timeupdate", update);
-  video.addEventListener("durationchange", update);
-  video.addEventListener("progress", update);
-  update();
-  return { container, bar };
-}
-
-function createProgressInput(video) {
-  const input = document.createElement("input");
-  input.type = "range";
-  input.min = 0;
-  input.max = 1000;
-  input.value = 0;
-  input.className = "custom-progress-input custom-progress-input-pos";
-  input.setAttribute("aria-label", "Video progress");
-  function update() {
-    if (video.duration) {
-      input.value = Math.floor((video.currentTime / video.duration) * 1000);
-    } else {
-      input.value = 0;
-    }
-  }
-  video.addEventListener("timeupdate", update);
-  video.addEventListener("durationchange", update);
-  video.addEventListener("progress", update);
-  input.addEventListener("input", () => {
-    if (video.duration) {
-      video.currentTime = (input.value / 1000) * video.duration;
+function getMostVisibleVideo() {
+  const videos = Array.from(document.querySelectorAll("video"));
+  if (videos.length === 0) return null;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  let best = null;
+  let bestScore = -1;
+  videos.forEach((video) => {
+    const rect = video.getBoundingClientRect();
+    const visibleWidth = Math.max(0, Math.min(rect.right, vw) - Math.max(rect.left, 0));
+    const visibleHeight = Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, 0));
+    const visibleArea = visibleWidth * visibleHeight;
+    if (visibleArea <= 0) return;
+    const score = visibleArea + (!video.paused ? 1 : 0);
+    if (score > bestScore) {
+      bestScore = score;
+      best = video;
     }
   });
-  update();
-  return input;
+  return best;
 }
 
-function setupAutoHide(controls, controlsBox, progressBarContainer, getOriginalBottom) {
-  let hideTimeout = null;
-  function hideControlsBox() {
-    controlsBox.style.opacity = "0";
-    controlsBox.style.pointerEvents = "none";
-    controls.classList.add("minimized");
-    controls.style.bottom = "0px";
-  }
-  function showControlsBox() {
-    controlsBox.style.opacity = "1";
-    controlsBox.style.pointerEvents = "auto";
-    controls.classList.remove("minimized");
-    controls.style.bottom = getOriginalBottom() + "px";
-  }
-  hideControlsBox();
-  controls.addEventListener("mouseleave", (e) => {
-    if (e.relatedTarget && progressBarContainer.contains(e.relatedTarget)) return;
-    hideTimeout = setTimeout(hideControlsBox, 2000);
-  });
-  controls.addEventListener("mouseenter", () => {
-    if (hideTimeout) clearTimeout(hideTimeout);
-    showControlsBox();
-  });
-  progressBarContainer.addEventListener("mouseenter", () => {
-    if (hideTimeout) clearTimeout(hideTimeout);
-    showControlsBox();
-  });
-  progressBarContainer.addEventListener("mouseleave", (e) => {
-    if (e.relatedTarget && controlsBox.contains(e.relatedTarget)) return;
-    hideTimeout = setTimeout(hideControlsBox, 2000);
-  });
-  controlsBox.addEventListener("mouseenter", () => {
-    if (hideTimeout) clearTimeout(hideTimeout);
-    showControlsBox();
-  });
-  controlsBox.addEventListener("mouseleave", (e) => {
-    if (e.relatedTarget && progressBarContainer.contains(e.relatedTarget)) return;
-    hideTimeout = setTimeout(hideControlsBox, 2000);
-  });
+function isVideoFullscreen(video) {
+  return document.fullscreenElement === video || document.fullscreenElement === video.parentElement;
 }
 
-function createControls(video) {
-  if (video.hasCustomControls) return;
-  if (!isFinite(video.duration) || isNaN(video.duration) || video.duration === 0) {
-    const onMeta = () => {
-      if (!isFinite(video.duration) || isNaN(video.duration) || video.duration === 0) {
-        return;
-      } else {
-        video.removeEventListener('loadedmetadata', onMeta);
-        createControls(video);
-      }
-    };
-    video.addEventListener('loadedmetadata', onMeta);
+function describeState(video) {
+  return {
+    found: true,
+    paused: video.paused,
+    currentTime: video.currentTime,
+    duration: isFinite(video.duration) ? video.duration : 0,
+    volume: video.volume,
+    muted: video.muted,
+    playbackRate: video.playbackRate,
+    isFullscreen: isVideoFullscreen(video),
+  };
+}
+
+function requestFullscreenOn(video) {
+  const container = video.parentElement || video;
+  const request =
+    container.requestFullscreen ||
+    container.webkitRequestFullscreen ||
+    container.mozRequestFullScreen ||
+    container.msRequestFullscreen;
+  if (request) request.call(container);
+}
+
+function exitFullscreen() {
+  const exit =
+    document.exitFullscreen ||
+    document.webkitExitFullscreen ||
+    document.mozCancelFullScreen ||
+    document.msExitFullscreen;
+  if (exit) exit.call(document);
+}
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  const video = getMostVisibleVideo();
+  if (!video) {
+    sendResponse({ found: false });
     return;
   }
-  video.hasCustomControls = true;
-  const icons = {
-    play: chrome.runtime.getURL('assets/play-circle.svg'),
-    stop: chrome.runtime.getURL('assets/stop-circle.svg'),
-    restart: chrome.runtime.getURL('assets/skip-start-circle.svg'),
-    rewind: chrome.runtime.getURL('assets/rewind-circle.svg'),
-    forward: chrome.runtime.getURL('assets/fast-forward-circle.svg'),
-    fullscreen: chrome.runtime.getURL('assets/fullscreen.svg'),
-    fullscreenExit: chrome.runtime.getURL('assets/fullscreen-exit.svg'),
-  };
-  const controls = document.createElement("div");
-  controls.className = "custom-video-controls";
-  const controlsBox = document.createElement("div");
-  controlsBox.className = "custom-controls-box";
-  const { container: progressBarContainer } = createProgressBar(video);
-  controls.appendChild(progressBarContainer);
-  const playPause = createPlayPauseButton(video, icons);
-  const restart = createRestartButton(video, icons);
-  const rewind = createRewindButton(video, icons);
-  const forward = createForwardButton(video, icons);
-  const volume = createVolumeSlider(video);
-  const fullscreenBtn = createFullscreenButton(video, icons);
-  const speedBtn = createSpeedButton(video);
-  const progressInput = createProgressInput(video);
-  controls.appendChild(progressInput);
-  controls.classList.add("custom-controls-relative");
-  controlsBox.appendChild(restart);
-  controlsBox.appendChild(rewind);
-  controlsBox.appendChild(playPause);
-  controlsBox.appendChild(forward);
-  controlsBox.appendChild(volume);
-  controlsBox.appendChild(fullscreenBtn);
-  controlsBox.appendChild(speedBtn);
-  controls.appendChild(controlsBox);
-  const parent = video.parentNode;
-  if (parent && parent.style.position !== "relative" && parent.style.position !== "absolute" && parent.style.position !== "fixed") {
-    parent.style.position = "relative";
-  }
-  parent.appendChild(controls);
-  let originalBottom = null;
-  function updateControlsPosition() {
-    const rect = video.getBoundingClientRect();
-    const videoHeight = rect.height || video.offsetHeight;
-    if (videoHeight) {
-      const bottom = (videoHeight * 0.1);
-      controls.style.bottom = bottom + "px";
-      originalBottom = bottom;
-    }
-  }
-  updateControlsPosition();
-  window.addEventListener('resize', updateControlsPosition);
-  video.addEventListener('loadedmetadata', updateControlsPosition);
-  video.addEventListener('resize', updateControlsPosition);
-  video.classList.add("custom-video-block");
-  setupAutoHide(controls, controlsBox, progressBarContainer, () => originalBottom ?? 0);
-}
 
-function addControlsToVideos() {
-  const videos = document.querySelectorAll("video");
-  videos.forEach(function (video) {
-    if (video.style.position === "absolute") {
-      video.style.position = "";
+  switch (message.type) {
+    case "getState":
+      sendResponse(describeState(video));
+      break;
+    case "playPause":
+      if (video.paused) video.play();
+      else video.pause();
+      sendResponse(describeState(video));
+      break;
+    case "restart":
+      video.currentTime = 0;
+      sendResponse(describeState(video));
+      break;
+    case "rewind":
+      video.currentTime = Math.max(0, video.currentTime - 5);
+      sendResponse(describeState(video));
+      break;
+    case "forward":
+      video.currentTime = Math.min(video.duration || video.currentTime, video.currentTime + 5);
+      sendResponse(describeState(video));
+      break;
+    case "seek":
+      if (video.duration) video.currentTime = message.payload.fraction * video.duration;
+      sendResponse(describeState(video));
+      break;
+    case "setVolume":
+      video.volume = message.payload.value;
+      video.muted = false;
+      sendResponse(describeState(video));
+      break;
+    case "toggleMute":
+      video.muted = !video.muted;
+      sendResponse(describeState(video));
+      break;
+    case "cycleSpeed": {
+      let idx = speedIndexByVideo.has(video) ? speedIndexByVideo.get(video) : speedSteps.indexOf(1.0);
+      idx = (idx + message.payload.direction + speedSteps.length) % speedSteps.length;
+      speedIndexByVideo.set(video, idx);
+      video.playbackRate = speedSteps[idx];
+      sendResponse(describeState(video));
+      break;
     }
-    if (!video.hasCustomControls) {
-      createControls(video);
-    }
-  });
-}
-
-// MutationObserver otimizado para adicionar controles apenas a vídeos novos
-const observer = new MutationObserver((mutations) => {
-  mutations.forEach(mutation => {
-    mutation.addedNodes.forEach(node => {
-      if (node.nodeType === 1) {
-        if (node.tagName === "VIDEO") {
-          if (!node.hasCustomControls) createControls(node);
-        } else {
-          // Se for container, busca vídeos dentro
-          node.querySelectorAll && node.querySelectorAll("video").forEach(video => {
-            if (!video.hasCustomControls) createControls(video);
-          });
-        }
-      }
-    });
-  });
+    case "toggleFullscreen":
+      if (!document.fullscreenElement) requestFullscreenOn(video);
+      else exitFullscreen();
+      sendResponse(describeState(video));
+      break;
+    default:
+      sendResponse({ found: true, error: "unknown message type" });
+  }
 });
-observer.observe(document.body, { childList: true, subtree: true });
-
-addControlsToVideos();

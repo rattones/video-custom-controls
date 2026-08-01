@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Video Custom Controls",
-  "description": "Adds custom controls (play, pause, rewind, forward, sound, restart) to video tags.",
-  "version": "1.5.4",
+  "description": "Control play, pause, rewind, forward, volume, speed and fullscreen of page videos from the extension popup.",
+  "version": "1.6.0",
   "author": "Marcelo Ratton",
   "homepage_url": "https://github.com/rattones/video-custom-controls",
   "icons": {
@@ -11,26 +11,16 @@
     "48": "assets/play-logo.png",
     "128": "assets/play-logo.png"
   },
+  "permissions": ["activeTab"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Video Custom Controls"
+  },
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
       "css": ["styles.css"]
-    }
-  ],
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "assets/play-logo.png",
-        "assets/play-circle.svg",
-        "assets/stop-circle.svg",
-        "assets/rewind-circle.svg",
-        "assets/fast-forward-circle.svg",
-        "assets/skip-start-circle.svg",
-        "assets/fullscreen.svg",
-        "assets/fullscreen-exit.svg"
-      ],
-      "matches": ["<all_urls>"]
     }
   ]
 }

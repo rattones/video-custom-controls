@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Video Custom Controls</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div id="no-video" class="state-message" hidden>
+    Nenhum vídeo encontrado nesta página.
+  </div>
+
+  <div id="panel" hidden>
+    <div class="time-row">
+      <span id="current-time">0:00</span>
+      <input id="seek" type="range" min="0" max="1000" value="0" aria-label="Progresso do vídeo" />
+      <span id="duration">0:00</span>
+    </div>
+
+    <div class="button-row">
+      <button id="restart" aria-label="Reiniciar vídeo">
+        <img src="assets/skip-start-circle.svg" alt="Reiniciar" />
+      </button>
+      <button id="rewind" aria-label="Voltar 5 segundos">
+        <img src="assets/rewind-circle.svg" alt="Voltar 5s" />
+      </button>
+      <button id="play-pause" aria-label="Play/Pause">
+        <img id="play-pause-icon" src="assets/play-circle.svg" alt="Play" />
+      </button>
+      <button id="forward" aria-label="Avançar 5 segundos">
+        <img src="assets/fast-forward-circle.svg" alt="Avançar 5s" />
+      </button>
+      <button id="fullscreen" aria-label="Tela cheia">
+        <img id="fullscreen-icon" src="assets/fullscreen.svg" alt="Tela cheia" />
+      </button>
+    </div>
+
+    <div class="secondary-row">
+      <label class="volume-label">
+        Volume
+        <input id="volume" type="range" min="0" max="1" step="0.01" value="1" aria-label="Volume" />
+      </label>
+      <button id="speed" aria-label="Velocidade de reprodução">1x</button>
+    </div>
+    <p class="hint">Clique direito na velocidade para diminuir.</p>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
