@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Video Custom Controls",
   "description": "Control play, pause, rewind, forward, volume, speed and fullscreen of page videos from the extension popup.",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "author": "Marcelo Ratton",
   "homepage_url": "https://github.com/rattones/video-custom-controls",
   "icons": {
