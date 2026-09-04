@@ -55,7 +55,11 @@ video-custom-controls/
 
 ## License
 
-MIT
+The extension's source code is licensed under the MIT License.
+
+The SVG icons in `assets/` are from [Bootstrap Icons](https://github.com/twbs/icons),
+copyright (c) 2019-2024 The Bootstrap Authors, also under the MIT License.
+Their full license notice is reproduced in [THIRD_PARTY.md](THIRD_PARTY.md).
 
 ## Author
 
